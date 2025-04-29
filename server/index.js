@@ -1,9 +1,7 @@
-globalThis.Config = require("./config.js")
-const express = require("express")
-const Router = require("./src/router")
+import express from 'express'
+import Router from "./src/router/index.js"
 
 const app = express()
-
 app.use(express.json())
 
 app.use("/api/v1", Router)
