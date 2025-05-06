@@ -3,11 +3,20 @@ const cache = createClient()
 await cache.connect()
 
 export default {
-    cache(key, hashtable = "notes") {
-        return cache.hGet(hashtable, key)
+    async cache(key, hashtable = "notes") {
+        let cachedData = await cache.hGet(hashtable, key)
+        if (cachedData != null) {
+            cachedData = JSON.parse(cachedData)
+            return cachedData
+        }
+        return false
     },
 
-    saveToCache(key, hashtable = "notes") {
-        return cache.hSet(hashtable, key)
+    async saveToCache(key, data, hashtable = "notes") {
+        const status = await cache.hSet(hashtable, key, JSON.stringify(data))
+        if (status) {
+            return true
+        }
+        return false
     }
 }
