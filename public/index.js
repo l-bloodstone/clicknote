@@ -11,7 +11,7 @@ const quill = new Quill('#editor', {
 (async function (){ 
 
     const getDeltaButton = document.getElementById("get_note")
-    const noteId = document.getElementById("username")
+    const noteId = document.getElementById("note_id")
     const password = document.getElementById("password")
     const saveNote = document.getElementById("save_note")
     const savePassword = document.getElementById("save_password")
@@ -149,6 +149,9 @@ const quill = new Quill('#editor', {
             editButton.removeAttribute("hidden")
             savePassword.removeAttribute("hidden")
             document.getElementById("standalone-container").removeAttribute("hidden")
+            noteId.remove()
+            password.remove()
+            getDeltaButton.remove()
             
             // if note data is empty do not attempt to decrypt it
             if (dataRes.data != null || dataRes.data.length > 0) {
@@ -158,9 +161,6 @@ const quill = new Quill('#editor', {
                 quill.disable()
             }
             
-            noteId.remove()
-            password.remove()
-            getDeltaButton.remove()
         }
     })
 
