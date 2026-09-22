@@ -3,21 +3,29 @@
     const password = document.querySelector("#password")
     const createButton = document.querySelector("#create_button")
 
-    async function getPassHash(password) {
-        const hash = await crypto.subtle.digest("SHA-512", new TextEncoder().encode(password))
-        return new Uint8Array(hash).toBase64()
+    function generateSalt() {
+        return crypto.getRandomValues(new Uint8Array(32))
     }
 
+    async function getPassHash(password) {
+        const salt = generateSalt()
+        const hash = await scrypt.scrypt(
+            new TextEncoder().encode(password),
+            salt,
+            4096, 16, 2, 64
+        )
+        return { passHash: hash.toBase64(), salt: salt.toBase64() }
+    }
 
     createButton.addEventListener("click", async ()=> {
-        const passHash = await getPassHash(password.value)
+        const {passHash, salt} = await getPassHash(password.value)
         const res = await fetch("/create_note", {
             method: "POST",
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({noteId: noteId.value.trim(), passHash: passHash})
+            body: JSON.stringify({noteId: noteId.value.trim(), passHash, salt})
         })
 
         if (res.status === 503) {

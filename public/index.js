@@ -17,18 +17,22 @@ const quill = new Quill('#editor', {
     const savePassword = document.getElementById("save_password")
     const editButton = document.getElementById("edit")
     let savedNoteId = ""
-
+    let savedSalt = ""
+    
+    async function getPassHash(password, salt) {
+        const hash = await scrypt.scrypt(
+            new TextEncoder().encode(password),
+            Uint8Array.fromBase64(salt),
+            4096, 16, 2, 64
+        )
+        return hash.toBase64()
+    }
     function deltaToJson(delta) {
         return JSON.stringify(delta)
     }
 
     function jsonToDelta(json) {
         return JSON.parse(json)
-    }
-
-    async function getPassHash(password) {
-        const hash = await crypto.subtle.digest("SHA-512", new TextEncoder().encode(password))
-        return new Uint8Array(hash).toBase64()
     }
 
     async function getKey(password) {
@@ -127,6 +131,20 @@ const quill = new Quill('#editor', {
 
     getDeltaButton.addEventListener("click", async ()=> {
 
+        const saltRes = await fetch("/get_salt", {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                noteId: noteId.value.trim()
+            })
+        })
+
+        let salt = await saltRes.json()
+        savedSalt = salt.salt
+
         const res = await fetch("/get_note", {
             method: "POST",
             headers: {
@@ -134,8 +152,10 @@ const quill = new Quill('#editor', {
                 'Content-Type': 'application/json'
             },
 
-            body: JSON.stringify({noteId: noteId.value.trim(), passHash: await getPassHash(password.value)})
+            body: JSON.stringify({noteId: noteId.value.trim(), passHash: await getPassHash(password.value, salt.salt)})
         })
+
+        console.log(res)
 
         if (res.status !== 200) {
             alert("Note Name or Password is wrong!")
@@ -143,7 +163,7 @@ const quill = new Quill('#editor', {
         } else {
 
             const dataRes = await res.json()
-            
+
             savedNoteId = noteId.value
             saveNote.removeAttribute("hidden")
             editButton.removeAttribute("hidden")
@@ -152,15 +172,15 @@ const quill = new Quill('#editor', {
             noteId.remove()
             password.remove()
             getDeltaButton.remove()
-            
+
             // if note data is empty do not attempt to decrypt it
-            if (dataRes.data != null || dataRes.data.length > 0) {
+            if (dataRes.data != "") {
                 const decryptedText = await decryptText(dataRes.data, password.value)
                 const delta = await jsonToDelta(decryptedText)
                 quill.setContents(delta)
                 quill.disable()
             }
-            
+
         }
     })
 
@@ -180,7 +200,7 @@ const quill = new Quill('#editor', {
             },
             body: JSON.stringify({
                 noteId: savedNoteId,
-                passHash: await getPassHash(savePassword.value),
+                passHash: await getPassHash(savePassword.value, savedSalt),
                 data: encText
             })
         })
