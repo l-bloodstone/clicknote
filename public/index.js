@@ -209,9 +209,11 @@ const quill = new Quill('#editor', {
         savePassword.value = ""
         if (res.status !== 200) {
             alert("Note couldn't be saved")
+            saveNote.removeAttribute("disabled")
             return
         }
         alert("Note Saved! 🎉")
+        saveNote.removeAttribute("disabled")
     })
 
     editButton.addEventListener("click", function() {
