@@ -157,7 +157,6 @@ const quill = new Quill('#editor', {
             body: JSON.stringify({noteId: noteId.value.trim(), passHash: await getPassHash(password.value, salt.salt)})
         })
 
-        console.log(res)
 
         if (res.status !== 200) {
             alert("Note Name or Password is wrong!")
