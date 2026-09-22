@@ -14,6 +14,16 @@
 
 #### *NOTE: The UI is horrible, no CSS at all. As an back-end developer I loath nothing more than CSS and Browser APIs. But encryption make sense in the client side, so I had no choice but to do the absolute essentials.
 
+### Tech Stack:
+- Front-End: JavaScript
+- Back-End: Go, Gin
+- Database: sqlite3 (easily migrateable to any sql based database)
+- Encryption: 
+    - Hashing: scrypt
+    - cypher: AES-CBC 256
+- Diagram: PlantUML
+
+
 ### Sequence Diagram for Easy Visualization:
 
 ![creating note](./assets/creating_note.svg)
