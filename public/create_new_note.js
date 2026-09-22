@@ -18,6 +18,7 @@
     }
 
     createButton.addEventListener("click", async ()=> {
+        createButton.setAttribute("disabled", true)
         const {passHash, salt} = await getPassHash(password.value)
         const res = await fetch("/create_note", {
             method: "POST",

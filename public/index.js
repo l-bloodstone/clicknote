@@ -131,6 +131,8 @@ const quill = new Quill('#editor', {
 
     getDeltaButton.addEventListener("click", async ()=> {
 
+        getDeltaButton.setAttribute("disabled", true)
+
         const saltRes = await fetch("/get_salt", {
             method: "POST",
             headers: {
@@ -164,7 +166,7 @@ const quill = new Quill('#editor', {
 
             const dataRes = await res.json()
 
-            savedNoteId = noteId.value
+            savedNoteId = noteId.value.trim()
             saveNote.removeAttribute("hidden")
             editButton.removeAttribute("hidden")
             savePassword.removeAttribute("hidden")
@@ -185,6 +187,7 @@ const quill = new Quill('#editor', {
     })
 
     saveNote.addEventListener("click", async ()=> {
+        saveNote.setAttribute("disabled", true)
         if (savePassword.value.length < 4) {
             alert("Invalid Password")
             return
@@ -213,6 +216,7 @@ const quill = new Quill('#editor', {
     })
 
     editButton.addEventListener("click", function() {
+        editButton.setAttribute("disabled", true)
         quill.enable()
     })
 })()
