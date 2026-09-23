@@ -19,6 +19,11 @@
 
     createButton.addEventListener("click", async ()=> {
         createButton.setAttribute("disabled", true)
+        if (password.value.length < 6) {
+            alert("Provide a password which is at least 6 characters")
+            createButton.removeAttribute("disabled")
+            return
+        }
         const {passHash, salt} = await getPassHash(password.value)
         const res = await fetch("/create_note", {
             method: "POST",

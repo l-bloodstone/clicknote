@@ -133,6 +133,12 @@ const quill = new Quill('#editor', {
 
         getDeltaButton.setAttribute("disabled", true)
 
+        if (password.value.length < 6) {
+            alert("Provide a password which is at least 6 characters")
+            getDeltaButton.removeAttribute("disabled")
+            return
+        }
+
         const saltRes = await fetch("/get_salt", {
             method: "POST",
             headers: {
@@ -187,8 +193,9 @@ const quill = new Quill('#editor', {
 
     saveNote.addEventListener("click", async ()=> {
         saveNote.setAttribute("disabled", true)
-        if (savePassword.value.length < 4) {
-            alert("Invalid Password")
+        if (savePassword.value.length < 6) {
+            alert("Provide a password which should be at least 6 characters")
+            saveNote.removeAttribute("disabled")
             return
         }
         const delta = quill.getContents()
