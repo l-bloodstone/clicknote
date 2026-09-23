@@ -166,6 +166,7 @@ const quill = new Quill('#editor', {
 
         if (res.status !== 200) {
             alert("Note Name or Password is wrong!")
+            getDeltaButton.removeAttribute("disabled")
             return
         } else {
 
@@ -215,7 +216,7 @@ const quill = new Quill('#editor', {
         })
         savePassword.value = ""
         if (res.status !== 200) {
-            alert("Note couldn't be saved")
+            alert("Note couldn't be saved, try again later")
             saveNote.removeAttribute("disabled")
             return
         }

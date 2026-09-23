@@ -36,8 +36,10 @@
 
         if (res.status === 503) {
             alert("Choose a different note name and try again!")
+            createButton.removeAttribute("disabled")
         } else if (res.status !== 200) {
             alert("Note couldn't be created!")
+            createButton.removeAttribute("disabled")
         } else {
             alert("Note created! Login to get your note")
             window.location.replace("/")
