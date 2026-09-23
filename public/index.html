@@ -1,81 +1,318 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>clickNote</title>
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>clickNote</title>
 
-    <body>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
-        <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" />
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.bubble.css" />
-        <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+    <!-- External libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.bubble.css" />
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 
-        <div id="nav">
-            <input placeholder="Note Name" type="email" id="note_id" >
-            <input placeholder="********" type="password" id="password" >
-            <button id="get_note">Get Note</button>
-            <input placeholder="********" type="password" id="save_password" hidden>
-            <button id="save_note" hidden >Save Note</button>
-            <button id="edit" hidden >Edit Note</button>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
 
-            <p>Or <a href="/create_new_note.html">Create a Note</a> </p>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 2rem 1rem;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            background-size: 400% 400%;
+            /* animation: gradientShift 15s ease infinite; */
+            overflow-x: hidden;
+            position: relative;
+            color: #fff;
+        }
+
+        /* Soft floating orbs */
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.45;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* @keyframes gradientShift { */
+        /*     0% { background-position: 0% 50%; } */
+        /*     50% { background-position: 100% 50%; } */
+        /*     100% { background-position: 0% 50%; } */
+        /* } */
+
+        /* ========== NAV (Glass Card) - Smaller ========== */
+        #nav {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 340px;          /* ← reduced from 520px */
+            padding: 1.15rem 1.1rem;   /* ← tighter padding */
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.12);
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;               /* ← tighter gap */
+            margin-bottom: 1.5rem;
+        }
+
+        #nav::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+            border-radius: 16px 16px 0 0;
+        }
+
+        /* Inputs - slightly smaller */
+        #nav input {
+            width: 100%;
+            padding: 0.7rem 0.9rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #nav input::placeholder {
+            color: rgba(255, 255, 255, 0.45);
+        }
+
+        #nav input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 0 3px rgba(123, 44, 191, 0.25);
+        }
+
+        /* Buttons */
+        #nav button {
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #7b2cbf, #00d4ff);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(123, 44, 191, 0.4);
+            letter-spacing: 0.3px;
+        }
+
+        #nav button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 22px rgba(123, 44, 191, 0.55);
+            filter: brightness(1.1);
+        }
+
+        #nav button:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        /* Disabled button style */
+        #nav button:disabled {
+            background: linear-gradient(135deg, #4a3a6b, #3a5a6b);
+            color: rgba(255, 255, 255, 0.45);
+            cursor: not-allowed;
+            box-shadow: none;
+            opacity: 0.6;
+            transform: none;
+            filter: grayscale(0.4);
+        }
+
+        /* Link text */
+        #nav p {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.65);
+            font-size: 0.85rem;
+            margin-top: 0.2rem;
+        }
+
+        #nav a {
+            color: #00d4ff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        #nav a:hover {
+            color: #7b2cbf;
+            text-decoration: underline;
+        }
+
+        /* ========== EDITOR CONTAINER ========== */
+        #standalone-container {
+            position: relative;
+            z-index: 5;
+            width: 100%;
+            max-width: 900px;
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+
+        /* Quill toolbar dark overrides */
+        #toolbar-container {
+            background: rgba(0, 0, 0, 0.25) !important;
+            border: none !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+            padding: 0.6rem 0.8rem !important;
+        }
+
+        .ql-toolbar.ql-snow {
+            border: none !important;
+        }
+
+        .ql-toolbar .ql-stroke {
+            stroke: rgba(255, 255, 255, 0.75) !important;
+        }
+
+        .ql-toolbar .ql-fill {
+            fill: rgba(255, 255, 255, 0.75) !important;
+        }
+
+        .ql-toolbar .ql-picker {
+            color: rgba(255, 255, 255, 0.8) !important;
+        }
+
+        .ql-toolbar button:hover,
+        .ql-toolbar button.ql-active {
+            background: rgba(123, 44, 191, 0.35) !important;
+            border-radius: 6px;
+        }
+
+        .ql-toolbar .ql-picker-options {
+            background: #1e1b2e !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            border-radius: 8px;
+            color: #fff !important;
+        }
+
+        /* Editor area */
+        #editor {
+            min-height: 420px;
+            background: transparent !important;
+            color: #e0e0e0 !important;
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        .ql-container.ql-snow {
+            border: none !important;
+        }
+
+        .ql-editor {
+            color: #e8e8e8 !important;
+            padding: 1.25rem 1.5rem !important;
+        }
+
+        .ql-editor.ql-blank::before {
+            color: rgba(255, 255, 255, 0.4) !important;
+            font-style: normal !important;
+        }
+
+        .ql-editor pre.ql-syntax {
+            background: #1a1825 !important;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div id="nav">
+        <input placeholder="Note Name" type="text" id="note_id">
+        <input placeholder="Password" type="password" id="password">
+        <button id="get_note">Get Note</button>
+
+        <input placeholder="Save Password" type="password" id="save_password" hidden>
+        <div style="display: flex; flex-direction: row;">
+            <button id="save_note" hidden>Save Note</button>
+            <button id="edit" hidden>Edit Note</button>
         </div>
 
-        <div hidden id="standalone-container">
-            <div id="toolbar-container">
-                <span class="ql-formats">
-                    <select class="ql-font"></select>
-                    <select class="ql-size"></select>
-                </span>
-                <span class="ql-formats">
-                    <button class="ql-bold"></button>
-                    <button class="ql-italic"></button>
-                    <button class="ql-underline"></button>
-                    <button class="ql-strike"></button>
-                </span>
-                <span class="ql-formats">
-                    <select class="ql-color"></select>
-                    <select class="ql-background"></select>
-                </span>
-                <span class="ql-formats">
-                    <button class="ql-script" value="sub"></button>
-                    <button class="ql-script" value="super"></button>
-                </span>
-                <span class="ql-formats">
-                    <button class="ql-header" value="1"></button>
-                    <button class="ql-header" value="2"></button>
-                    <button class="ql-blockquote"></button>
-                    <button class="ql-code-block"></button>
-                </span>
-                <span class="ql-formats">
-                    <button class="ql-list" value="ordered"></button>
-                    <button class="ql-list" value="bullet"></button>
-                    <button class="ql-indent" value="-1"></button>
-                    <button class="ql-indent" value="+1"></button>
-                </span>
-                <span class="ql-formats">
-                    <button class="ql-direction" value="rtl"></button>
-                    <select class="ql-align"></select>
-                </span>
-                <span class="ql-formats">
-                    <button class="ql-link"></button>
-                    <button class="ql-image"></button>
-                    <button class="ql-video"></button>
-                    <button class="ql-formula"></button>
-                </span>
-                <span class="ql-formats">
-                    <button class="ql-clean"></button>
-                </span>
-            </div>
-            <div id="editor">
-            </div>
+        <p>Or <a href="/create_new_note.html">Create a Note</a></p>
+    </div>
+
+    <div hidden id="standalone-container">
+        <div id="toolbar-container">
+            <span class="ql-formats">
+                <select class="ql-font"></select>
+                <select class="ql-size"></select>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-bold"></button>
+                <button class="ql-italic"></button>
+                <button class="ql-underline"></button>
+                <button class="ql-strike"></button>
+            </span>
+            <span class="ql-formats">
+                <select class="ql-color"></select>
+                <select class="ql-background"></select>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-script" value="sub"></button>
+                <button class="ql-script" value="super"></button>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-header" value="1"></button>
+                <button class="ql-header" value="2"></button>
+                <button class="ql-blockquote"></button>
+                <button class="ql-code-block"></button>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-list" value="ordered"></button>
+                <button class="ql-list" value="bullet"></button>
+                <button class="ql-indent" value="-1"></button>
+                <button class="ql-indent" value="+1"></button>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-direction" value="rtl"></button>
+                <select class="ql-align"></select>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-link"></button>
+                <button class="ql-image"></button>
+                <button class="ql-video"></button>
+                <button class="ql-formula"></button>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-clean"></button>
+            </span>
         </div>
-        <script src="./scrypt.js"></script>
-        <script src="./index.js"></script>
-    </body>
+        <div id="editor"></div>
+    </div>
+
+    <script src="./scrypt.js"></script>
+    <script src="./index.js"></script>
+</body>
 </html>

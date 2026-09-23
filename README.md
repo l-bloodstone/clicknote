@@ -12,7 +12,6 @@
 
 #### *NOTE: As an offline maniac I've bundled the dependencies in the repo using `go mod vendor`. It is for easy installation. Just need a `go` compiler.*
 
-#### *NOTE: The UI is horrible, no CSS at all. As an back-end developer I loath nothing more than CSS and Browser APIs. But encryption make sense in the client side, so I had no choice but to do the absolute essentials.
 
 ### Tech Stack:
 - Front-End: JavaScript
