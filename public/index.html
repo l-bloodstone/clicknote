@@ -55,13 +55,12 @@
         /*     100% { background-position: 0% 50%; } */
         /* } */
 
-        /* ========== NAV (Glass Card) - Smaller ========== */
         #nav {
             position: relative;
             z-index: 10;
             width: 100%;
-            max-width: 340px;          /* ← reduced from 520px */
-            padding: 1.15rem 1.1rem;   /* ← tighter padding */
+            max-width: 340px;          
+            padding: 1.15rem 1.1rem;   
             background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -72,7 +71,7 @@
                 inset 0 1px 0 rgba(255, 255, 255, 0.12);
             display: flex;
             flex-direction: column;
-            gap: 0.7rem;               /* ← tighter gap */
+            gap: 0.7rem;               
             margin-bottom: 1.5rem;
         }
 
@@ -87,7 +86,6 @@
             border-radius: 16px 16px 0 0;
         }
 
-        /* Inputs - slightly smaller */
         #nav input {
             width: 100%;
             padding: 0.7rem 0.9rem;
@@ -110,7 +108,6 @@
             box-shadow: 0 0 0 3px rgba(123, 44, 191, 0.25);
         }
 
-        /* Buttons */
         #nav button {
             width: 100%;
             padding: 0.75rem;
@@ -136,7 +133,6 @@
             transform: translateY(0);
         }
 
-        /* Disabled button style */
         #nav button:disabled {
             background: linear-gradient(135deg, #4a3a6b, #3a5a6b);
             color: rgba(255, 255, 255, 0.45);
@@ -147,7 +143,6 @@
             filter: grayscale(0.4);
         }
 
-        /* Link text */
         #nav p {
             text-align: center;
             color: rgba(255, 255, 255, 0.65);
@@ -167,7 +162,6 @@
             text-decoration: underline;
         }
 
-        /* ========== EDITOR CONTAINER ========== */
         #standalone-container {
             position: relative;
             z-index: 5;
@@ -182,7 +176,6 @@
             overflow: hidden;
         }
 
-        /* Quill toolbar dark overrides */
         #toolbar-container {
             background: rgba(0, 0, 0, 0.25) !important;
             border: none !important;
