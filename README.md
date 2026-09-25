@@ -6,6 +6,11 @@
 - Rich-Text editor using Quill.js
 - supports embeded photos and videos
 
+### Screenshots:
+
+![create_page](./assets/create_page.png)
+![edit_page](./assets/edit_page.png)
+
 ### Installation:
 - just clone the repo
 - run in command-line `make run`
@@ -25,6 +30,6 @@
 
 ### Sequence Diagram for Easy Visualization:
 
-![creating note](./assets/creating_note.svg)
+![](./assets/creating_note.svg)
 ![gettting note](./assets/getting_note.svg)
 ![saving note](./assets/saving_note.svg)
