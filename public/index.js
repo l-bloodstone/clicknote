@@ -139,7 +139,7 @@ const quill = new Quill('#editor', {
             return
         }
 
-        const saltRes = await fetch("/get_salt", {
+        const saltRes = await fetch("/api/get_salt", {
             method: "POST",
             headers: {
                 'Accept': 'application/json',
@@ -153,7 +153,7 @@ const quill = new Quill('#editor', {
         let salt = await saltRes.json()
         savedSalt = salt.salt
 
-        const res = await fetch("/get_note", {
+        const res = await fetch("/api/get_note", {
             method: "POST",
             headers: {
                 'Accept': 'application/json',
@@ -202,7 +202,7 @@ const quill = new Quill('#editor', {
         const delta = quill.getContents()
         const deltaJson = deltaToJson(delta)
         const encText = await encryptText(deltaJson, savePassword.value)
-        const res = await fetch("/save_note", {
+        const res = await fetch("/api/save_note", {
             method: "PUT",
             headers: {
                 'Accept': 'application/json',

@@ -6,10 +6,11 @@ import (
 
 var router *gin.Engine
 
-func GetRouter() *gin.Engine {
+func GetMainRouter() *gin.Engine {
 	if router != nil {
 		return router
 	}
+	gin.SetMode(gin.ReleaseMode)
 	router = gin.New()
 	return router
 }

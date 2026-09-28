@@ -25,7 +25,7 @@
             return
         }
         const {passHash, salt} = await getPassHash(password.value)
-        const res = await fetch("/create_note", {
+        const res = await fetch("/api/create_note", {
             method: "POST",
             headers: {
                 'Accept': 'application/json',
