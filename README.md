@@ -27,6 +27,32 @@
     - cypher: AES-CBC 256
 - Diagram: PlantUML
 
+### Project Structure:
+
+```
+.
+├── public
+│   ├── create_new_note.html
+│   ├── create_new_note.js
+│   ├── index.html
+│   ├── index.js
+│   └── scrypt.js
+├── server
+│   ├── controllers
+│   │   └── note.go
+│   ├── dab
+│   │   └── db.go
+│   ├── router
+│   │   ├── api_route.go
+│   │   └── main_router.go
+│   ├── go.mod
+│   ├── go.sum
+│   ├── main.go
+│   └── notes.db
+├── Makefile
+└── README.md
+```
+
 
 ### Sequence Diagram for Easy Visualization:
 
